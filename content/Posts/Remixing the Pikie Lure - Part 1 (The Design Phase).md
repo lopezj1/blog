@@ -2,6 +2,8 @@
 
 title: "Remixing the Pikie Lure - Part 1 (The Design Phase)"
 
+publish: true
+
 date: 2024-10-28 00:00:00 -04:00
 
 tags: [3D Printing, CNC Machining, Shapeoko, Ender3, Fusion360]
@@ -71,32 +73,83 @@ At first glance, it appears PLA will sink in saltwater and basswood will float, 
 To explain how this can be done, I will need to walk through the CAD modeling of the design and highlight some of the nuances in additive manufacturing that can help solve this problem.
 #### CAD Modeling
 
+The design was built in Fusion360, taking full advantage of its parametric modeling tools. Before drawing a single sketch, I set up a user parameters table with key values like body length, max body diameter, taper ratios, and thru-wire diameter. This upfront investment means future iterations — scaling the lure from 6" to 7", or adjusting the taper to change swimming depth — require nothing more than updating a few numbers.
+
+**Body Profile**
+
+The Pikie's signature silhouette — a tapered body with a widened mid-section — was modeled using a series of lofted profiles along a central spine. Each profile is driven by the parametric table, so the overall shape can be stretched or reshaped without rebuilding the model from scratch.
+
+**Solving the Buoyancy Problem**
+
+Returning to the density math from the previous section: for the lure body to float, its effective density must stay below 1.025 g/cm³. A solid PLA body at 1.240 g/cm³ won't cut it — but Fusion360 gives us a clean solution: shell the body.
+
+By designing the lure with a hollow core and uniform wall thickness, the effective density becomes a function of the shell volume rather than the total envelope volume:
+
+$$
+\rho_{eff} = \frac{m_{shell}}{V_{total}} = \frac{\rho_{PLA} \cdot V_{shell}}{V_{total}}
+$$
+
+Rearranging, the shell must occupy less than about 83% of the total body volume for the PLA body to float bare:
+
+$$
+\frac{V_{shell}}{V_{total}} < \frac{\rho_{saltwater}}{\rho_{PLA}} = \frac{1.025}{1.240} \approx 0.827
+$$
+
+In practice I need a comfortable margin below that threshold to account for hardware weight — the thru-wire, hook hangers, and any ballast. I modeled the shell at a wall thickness that targets an effective body density well below 1.0 g/cm³, leaving headroom for hardware and future tuning.
+
+**Two-Halves Split**
+
+The body is split along the horizontal centerline — a flat parting line running the full length of the lure. This is the same concept used in injection molding: the parting line must be chosen so neither half has features that would trap the tool or prevent the part from being removed. For the CNC version, this means no undercuts — every surface must be accessible from directly above. For 3D printing, the flat parting face also minimizes the need for supports, keeping surface quality high.
+
+**Thru-Wire and Hardware**
+
+A U-shaped channel runs along the centerline of each half to house the thru-wire from nose to tail. Hook hanger positions are parametrically defined points along the spine, driving the placement of wire loops or eyelets during assembly.
+
+**Alignment**
+
+The two halves are registered by press-fit alignment pins distributed along the parting face, sized to the dimensional tolerances I've been able to achieve reliably on the Ender3. The tighter accuracy of the Shapeoko should make these fits even cleaner on the CNC version.
+
 ## Learnings
 
 #### Challenges
 
+**Capturing the Pikie Profile**
+
+The original Pikie has a very specific cross-sectional shape that produces its distinctive wobble. Translating that organic, lathe-turned profile into a parametric sketch took several iterations — I leaned heavily on reference images and measurements from published plug-building guides to get the taper and belly dialed in.
+
+**Designing for Two Manufacturing Processes at Once**
+
+The dual-process requirement imposed constraints that occasionally pulled in opposite directions. CNC toolpaths require minimum corner radii dictated by the end mill diameter; sharp internal corners that print cleanly on an FDM printer need to be radiused for the CNC workflow. Balancing both sets of constraints without compromising the swimming profile required careful thought about which features could be shared and which needed process-specific workarounds.
+
+**Thru-Wire Channel Alignment Across the Parting Line**
+
+Getting the wire channel to align perfectly across both halves — especially at the nose and tail where the wire exits the body — required precise feature mirroring in Fusion360. Any misalignment would bind the wire during assembly and create stress concentrations at the exit points.
+
 #### New Skills
+
+**Fusion360 User Parameters**
+
+This was my most thorough use of Fusion360's user parameters table to date. Building a fully driven parametric model from the ground up — rather than retrofitting parameters into an existing sketch — made it dramatically faster to explore shape variations.
+
+**DFM Across Multiple Processes**
+
+Thinking through Design for Manufacturing for both additive and subtractive workflows simultaneously was new territory. It reinforced the habit of asking "can both machines make this feature?" before committing to geometry — a discipline that should pay dividends on future projects.
 
 ## Ready for Prototyping
 
-<!-- Final Design -->
+After several rounds of iteration the design is locked: a 6-inch body split along the horizontal centerline, wall thickness tuned to keep the effective body density well below the saltwater threshold, a full-length thru-wire channel, and three hook hanger positions. The parametric model means scaling to a 5" or 7" variant is a single parameter change away.
 
-<!-- Next Post Tease -->
+Next up is Part 2: printing the first prototype on the Ender3, post-processing with epoxy resin for water resistance, assembling the hardware, and — the moment of truth — getting it in the water to see if it floats and swims the way the model predicts.
 
 ## Conclusion
 
-<!-- encourage comments for feedback/questions
+The design phase of this project was a reminder that even a "simple" fishing lure is a surprisingly nuanced engineering problem. Buoyancy math, DFM trade-offs, and the constraints of two manufacturing processes all had to be balanced before a single piece of filament was laid down. The parametric model is the insurance policy that makes all of that iteration tractable.
 
-invite engagement - ask if anyone has remixed this or similar -->
-
-  
+If you've built your own lures or experimented with 3D-printed or CNC-machined fishing tackle, I'd love to hear how you approached the design — especially around buoyancy tuning. Drop a comment below or reach out directly. And if you're curious how the prototype turns out, stay tuned for Part 2.
 
 ## References
-
 1. [Plug Building 2023: The Anti-Pike](https://www.thefisherman.com/article/plug-building-2023-the-anti-pike/)
-
 2. [How to Build a Danny style Plug](https://www.stripers247.com/media/categories/how-to-build-a-danny-style-plug.7/)
-
 3. [Tips for 3D Printing Press-Fit Parts](https://makezine.com/article/digital-fabrication/3d-printing-workshop/tips-3d-printing-press-fit-parts/)
-
 4. [Complete 3D Printed Fishing Lure Design Course - Designing the Lure Body](https://youtu.be/7JGIUfx0y8I?si=sHJDN0qpQfNqf2Qc)
+5. https://www.stripersonline.com/surftalk/topic/636740-anatomy-of-a-pichney-plug/

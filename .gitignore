@@ -1,11 +1,22 @@
-.DS_Store
-.gitignore
-node_modules
-public
-prof
-tsconfig.tsbuildinfo
-.obsidian
-.quartz-cache
-private/
-.replit
-replit.nix
+# Ignore everything by default
+*
+
+# Un-ignore Quartz infrastructure
+!.gitignore
+!quartz.config.ts
+!quartz.layout.ts
+!package.json
+!package-lock.json
+!globals.d.ts
+!index.d.ts
+!tsconfig.json
+!quartz/
+!quartz/**
+
+# Un-ignore blog content
+!content/
+!content/**
+
+# Re-ignore build artifacts
+node_modules/
+public/

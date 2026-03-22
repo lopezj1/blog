@@ -1,5 +1,6 @@
 ---
 title: Welcome to My Tinkering World!
+publish: true
 ---
 This blog is a collection of my personal projects and experiments—where I dive into everything from [[CNC machining]], [[3D printing]], [[IoT]], and [[programming]]. It's my way of documenting and sharing the fun, challenges, and insights that come with hands-on tinkering.
 
